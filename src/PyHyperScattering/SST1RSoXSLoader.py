@@ -126,7 +126,10 @@ class SST1RSoXSLoader(FileLoader):
     def read_json(self,jsonfile):
         json_dict = {}
         with open(jsonfile) as f:
-            data = json.load(f)
+            # Loading the data as the second element in a list is to make cycle
+            # 2 2023 compatible with this loader. This probably breaks the loading
+            # from different cycles... 
+            data = [0, json.load(f)]  
             meas_time =datetime.datetime.fromtimestamp(data[1]['time'])
             json_dict['sample_name'] = data[1]['sample_name']
         if data[1]['RSoXS_Main_DET'] == 'SAXS':
@@ -150,7 +153,7 @@ class SST1RSoXSLoader(FileLoader):
                 json_dict['beamcenter_y'] = data[1]['RSoXS_SAXS_BCY']
                 json_dict['sdd'] = data[1]['RSoXS_SAXS_SDD']
 
-        elif data[1]['RSoXS_Main_DET'] == 'WAXS':
+        elif (data[1]['RSoXS_Main_DET'] == 'WAXS') | (data[1]['RSoXS_Main_DET'] == 'waxs_det'):
             json_dict['rsoxs_config'] = 'waxs'
             if (meas_time > datetime.datetime(2020,11,16)) and (meas_time < datetime.datetime(2021,1,15)):
                 json_dict['beamcenter_x'] = 400.46
@@ -247,7 +250,9 @@ class SST1RSoXSLoader(FileLoader):
         else:
             cwd = pathlib.Path(dirPath)
 
-        json_fname = list(cwd.glob('*.jsonl'))
+        # Changed '*.jsonl' to '*.json' for cycle 2 2023
+        # Again, probably breaks metadata loading from different cycles... 
+        json_fname = list(cwd.glob('*.json'))
         json_dict = self.read_json(json_fname[0])
 
         baseline_fname = list(cwd.glob('*baseline.csv'))
