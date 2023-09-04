@@ -252,7 +252,7 @@ class SST1RSoXSLoader(FileLoader):
 
         # Changed '*.jsonl' to '*.json' for cycle 2 2023
         # Again, probably breaks metadata loading from different cycles... 
-        json_fname = list(cwd.glob('*.json'))
+        json_fname = list(cwd.glob('*.jsonl')+cwd.glob('*.json'))
         json_dict = self.read_json(json_fname[0])
 
         baseline_fname = list(cwd.glob('*baseline.csv'))
