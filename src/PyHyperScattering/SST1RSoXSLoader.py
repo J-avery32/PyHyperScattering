@@ -129,6 +129,7 @@ class SST1RSoXSLoader(FileLoader):
             # Loading the data as the second element in a list is to make cycle
             # 2 2023 compatible with this loader. This probably breaks the loading
             # from different cycles... 
+            data = json.load(f)
             meas_time =datetime.datetime.fromtimestamp(data[1]['time'])
             json_dict['sample_name'] = data[1]['sample_name']
         if data[1]['RSoXS_Main_DET'] == 'SAXS':
